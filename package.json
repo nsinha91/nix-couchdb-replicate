@@ -1,5 +1,5 @@
 {
-  "name": "couchdb-multi-db-replicator",
+  "name": "nix-couchdb-replicate",
   "version": "1.0.0",
   "description": "Does a one-off replication of all databases in one CouchDB installation to another CouchDB installation",
   "main": "index.js",
