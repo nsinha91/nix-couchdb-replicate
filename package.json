@@ -1,0 +1,15 @@
+{
+  "name": "couchdb-multi-db-replicator",
+  "version": "1.0.0",
+  "description": "Does a one-off replication of all databases in one CouchDB installation to another CouchDB installation",
+  "main": "index.js",
+  "author": "Nikhil Sinha",
+  "license": "ISC",
+  "dependencies": {
+    "cli-progress": "^3.9.0",
+    "nano": "^9.0.3"
+  },
+  "bin": {
+    "nix-couchdb-replicate": "./index.js"
+  }
+}
