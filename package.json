@@ -11,5 +11,9 @@
   },
   "bin": {
     "nix-couchdb-replicate": "./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nsinha91/nix-couchdb-replicate.git"
   }
 }
