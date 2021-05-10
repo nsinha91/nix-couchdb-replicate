@@ -99,10 +99,10 @@ const showHelpInfo = () => {
   console.log("\nDescription:")
   console.log(`${package.description}`)
   console.log("\nUsage:")
-  console.log("node index <option1>=<value1> <option2>=<value2> ...")
+  console.log("nix-couchdb-replicate <option1>=<value1> <option2>=<value2> ...")
   console.log("\nExample Usage:")
   console.log(
-    "node index source_url=https://admin:password@12.34.56.78:6984 target_url=http://admin:password@98.76.54.32:5984"
+    "nix-couchdb-replicate source_url=https://admin:password@12.34.56.78:6984 target_url=http://admin:password@98.76.54.32:5984"
   )
   console.log("\nOptions:")
   Object.values(validator).forEach((fieldDetails) => {
@@ -120,15 +120,15 @@ const showHelpInfo = () => {
   console.log("\nMore Examples:")
   console.log("-> When target is a local installation:")
   console.log(
-    "node index source_url=https://admin:password@12.34.56.78:6984 target_url=http://admin:password@localhost:5984 use_target_replicator=true"
+    "nix-couchdb-replicate source_url=https://admin:password@12.34.56.78:6984 target_url=http://admin:password@localhost:5984 use_target_replicator=true"
   )
   console.log("-> Faster replication using a larger batch size:")
   console.log(
-    "node index source_url=https://admin:password@12.34.56.78:6984 target_url=http://admin:password@98.76.54.32:5984 batch_size=20"
+    "nix-couchdb-replicate source_url=https://admin:password@12.34.56.78:6984 target_url=http://admin:password@98.76.54.32:5984 batch_size=20"
   )
   console.log("-> Skipping the _replicator and _users dbs for replication:")
   console.log(
-    "node index source_url=https://admin:password@12.34.56.78:6984 target_url=http://admin:password@98.76.54.32:5984 skip_dbs=_replicator,_users"
+    "nix-couchdb-replicate source_url=https://admin:password@12.34.56.78:6984 target_url=http://admin:password@98.76.54.32:5984 skip_dbs=_replicator,_users"
   )
 }
 
