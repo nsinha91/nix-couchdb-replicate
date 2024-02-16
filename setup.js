@@ -25,20 +25,13 @@ const createDb = async ({ baseUrl, name }) => {
   }
 }
 
-// -- Main --
-const main = async () => {
-  // -- Create _users dbs --
-  await createDb({ baseUrl: testDb1Url, name: "_users" })
-  await createDb({ baseUrl: testDb2Url, name: "_users" })
-  // -- Return --
-  return true
-}
-
 // -- Run --
-main()
-  .then((data) => {
-    console.log("Setup successful")
-  })
-  .catch((err) => {
+;(async () => {
+  try {
+    // -- Create _users dbs --
+    await createDb({ baseUrl: testDb1Url, name: "_users" })
+    await createDb({ baseUrl: testDb2Url, name: "_users" })
+  } catch (err) {
     console.error(err)
-  })
+  }
+})()
