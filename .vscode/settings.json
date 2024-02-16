@@ -1,0 +1,14 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": ["javascript"],
+  "files.associations": {
+    "*.json": "json", // Treat all json files as json, except:
+    ".eslintrc.json": "jsonc", // Allow comments in .eslintrc.json file.
+    "**/.vscode/settings.json": "jsonc", // Allow comments in .vscode/settings.json file.
+    "**/.vscode/extensions.json": "jsonc" // Allow comments in .vscode/extensions.json file.
+  }
+}

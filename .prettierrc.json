@@ -1,0 +1,9 @@
+{
+  "semi": false,
+  "trailingComma": "es5",
+  "endOfLine": "auto",
+  "comments": {
+    "trailingComma": "The default setting of all adds commas after each and every multiline function argument, even if there is only one argument. Setting this to es5 prevents this.",
+    "endOfLine": "Setting this to auto prevents prettier from changing line endings (e.g., CRLF to LF or vice versa) depending on OS. The default is lf."
+  }
+}

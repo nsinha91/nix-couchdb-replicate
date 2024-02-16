@@ -1,0 +1,18 @@
+name: nix-couchdb-replicate-test
+services:
+  db1:
+    image: couchdb
+    container_name: test-db-1
+    environment:
+      COUCHDB_USER: ${TEST_DB_ADMIN_USER}
+      COUCHDB_PASSWORD: ${TEST_DB_ADMIN_PASSWORD}
+    ports:
+      - "${TEST_DB_1_PORT}:5984"
+  db2:
+    image: couchdb
+    container_name: test-db-2
+    environment:
+      COUCHDB_USER: ${TEST_DB_ADMIN_USER}
+      COUCHDB_PASSWORD: ${TEST_DB_ADMIN_PASSWORD}
+    ports:
+      - "${TEST_DB_2_PORT}:5984"
