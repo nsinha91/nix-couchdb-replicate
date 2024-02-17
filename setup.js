@@ -25,8 +25,8 @@ const createDb = async ({ baseUrl, name }) => {
   }
 }
 
-// -- Run --
-;(async () => {
+// -- Main --
+const main = async () => {
   try {
     // -- Create _users dbs --
     await createDb({ baseUrl: testDb1Url, name: "_users" })
@@ -34,4 +34,7 @@ const createDb = async ({ baseUrl, name }) => {
   } catch (err) {
     console.error(err)
   }
-})()
+}
+
+// -- Run --
+main()

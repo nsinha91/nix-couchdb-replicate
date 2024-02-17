@@ -1,13 +1,14 @@
 {
   "name": "nix-couchdb-replicate",
-  "version": "1.1.0",
-  "description": "Does a one-off replication of all databases in one CouchDB installation to another CouchDB installation",
+  "version": "2.0.0",
+  "description": "Does a one-off, one-way replication of all databases in one CouchDB installation to another CouchDB installation",
   "main": "index.js",
   "author": "Nikhil Sinha",
   "license": "ISC",
   "dependencies": {
     "cli-progress": "^3.9.0",
-    "nano": "^9.0.3"
+    "nano": "^9.0.3",
+    "validator": "^13.11.0"
   },
   "bin": {
     "nix-couchdb-replicate": "./index.js"
