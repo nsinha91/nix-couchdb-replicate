@@ -5,14 +5,15 @@ const { stripCredentialsFromUrl } = require("./utils")
 const {
   getAllDbNames,
   replicateDb,
-  isHelpArg,
-  isVersionArg,
-  showHelpInfo,
-  showVersionInfo,
-  getValidatedMainArgs,
   checkDbServer,
   filterSourceDbNamesToReplicate,
-} = require("./services")
+} = require("./services/db")
+const {
+  isHelpArg,
+  isVersionArg,
+  getValidatedMainArgs,
+} = require("./services/args")
+const { showHelpInfo, showVersionInfo } = require("./services/info")
 
 const main = async () => {
   try {
