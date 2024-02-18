@@ -1,3 +1,4 @@
+const packageDotJson = require("../package.json")
 const { urlArgValidationFn, listArgValidationFn } = require("./utils")
 
 const helpArgConfig = {
@@ -35,8 +36,7 @@ const mainArgsConfig = {
   },
   nonUsersSystemDbsToInclude: {
     name: "non_users_system_dbs_to_include",
-    description:
-      "System dbs (those whose names begin with '_') other than '_users' (such as '_replicator' and '_global_changes') to be included in the replication. If passed, should be a comma-separated string of db names, e.g., 'non_users_system_dbs_to_include=_replicator,_global_changes'. By default, no system dbs other than '_users' are included in the replication.",
+    description: `System dbs (those whose names begin with '_') other than '_users' (such as '_replicator' and '_global_changes') to be included in the replication. If passed, should be a comma-separated string of db names, e.g., 'non_users_system_dbs_to_include=_replicator,_global_changes'. Since ${packageDotJson.name} uses CouchDB's transient replication (i.e., there is no involvement of CouchDB's '_replicator' database), you most likely do not need to include the '_replicator' db in the replication. By default, no system dbs other than '_users' are included in the replication.`,
     defaultValue: [],
     validationFn: listArgValidationFn,
     sanitize: (val) => val.split(","),

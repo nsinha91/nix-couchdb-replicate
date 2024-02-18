@@ -97,7 +97,6 @@ const buildReadme = () => {
       }
     }
   }
-  console.log(mdText)
   fs.writeFileSync("README.md", mdText)
 }
 
