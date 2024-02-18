@@ -1,5 +1,9 @@
 const packageDotJson = require("../package.json")
-const { urlArgValidationFn, listArgValidationFn } = require("./utils")
+const {
+  urlArgValidationFn,
+  listArgValidationFn,
+  intArgValidationFn,
+} = require("./utils")
 
 const helpArgConfig = {
   names: ["-h", "--help"],
@@ -63,6 +67,14 @@ const mainArgsConfig = {
     defaultValueArg: "target_url",
     stripCredentialsFromDefaultValueUrl: true,
     validationFn: urlArgValidationFn,
+  },
+  batchSize: {
+    name: "batch_size",
+    description:
+      "Number of dbs to replicate in parallel. A higher value means faster replication but also higher utilization of resources. A lower value means slower replication and better utilization of resources. If passed, should be between '1' and '50' inclusive. Defaults to '5'.",
+    defaultValue: 5,
+    validationFn: (val) => intArgValidationFn(val, 1, 50),
+    sanitize: (val) => parseInt(val),
   },
 }
 

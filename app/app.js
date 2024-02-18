@@ -2,7 +2,7 @@
 // -- Imports --
 const cliProgress = require("cli-progress")
 const { helpArgConfig, versionArgConfig, mainArgsConfig } = require("./config")
-const { stripCredentialsFromUrl } = require("./utils")
+const { stripCredentialsFromUrl, chunkArray } = require("./utils")
 const {
   getAllDbNames,
   replicateDb,
@@ -80,6 +80,10 @@ const main = async () => {
     })
     // -- Replicate dbs --
     console.log("\n> Progress:")
+    const sourceDbNameChunksToReplicate = chunkArray({
+      arr: sourceDbNamesToReplicate,
+      chunkSize: validatedMainArgs.batch_size,
+    })
     const totalNoOfDbsInSource = allSourceDbNames.length
     const noOfDbsToReplicate = sourceDbNamesToReplicate.length
     const replicateDbResponses = []
@@ -88,23 +92,32 @@ const main = async () => {
       cliProgress.Presets.shades_classic
     )
     progressBar.start(noOfDbsToReplicate, 0)
-    for (const [i, dbName] of sourceDbNamesToReplicate.entries()) {
-      const replicateDbResponse = await replicateDb({
-        dbName,
-        executionServer: validatedMainArgs.execution_server,
-        sourceDbServerUrl,
-        sourceDbServerUsername,
-        sourceDbServerPassword,
-        targetDbServerUrl,
-        targetDbServerUsername,
-        targetDbServerPassword,
-        sourceUrlInsideExecutionServer:
-          validatedMainArgs.source_url_inside_execution_server,
-        targetUrlInsideExecutionServer:
-          validatedMainArgs.target_url_inside_execution_server,
-      })
-      replicateDbResponses.push(replicateDbResponse)
-      progressBar.update(i + 1)
+    for (const chunkedSourceDbNamesToReplicate of sourceDbNameChunksToReplicate) {
+      const chunkedReplicateDbResponsePromises = []
+      for (const dbName of chunkedSourceDbNamesToReplicate) {
+        const replicateDbResponsePromise = new Promise((resolve) => {
+          replicateDb({
+            dbName,
+            executionServer: validatedMainArgs.execution_server,
+            sourceDbServerUrl,
+            sourceDbServerUsername,
+            sourceDbServerPassword,
+            targetDbServerUrl,
+            targetDbServerUsername,
+            targetDbServerPassword,
+            sourceUrlInsideExecutionServer:
+              validatedMainArgs.source_url_inside_execution_server,
+            targetUrlInsideExecutionServer:
+              validatedMainArgs.target_url_inside_execution_server,
+          }).then((replicateDbResponse) => {
+            replicateDbResponses.push(replicateDbResponse)
+            progressBar.update(replicateDbResponses.length)
+            resolve(true)
+          })
+        })
+        chunkedReplicateDbResponsePromises.push(replicateDbResponsePromise)
+      }
+      await Promise.allSettled(chunkedReplicateDbResponsePromises)
     }
     progressBar.stop()
     const successfulReplicateDbResponses = replicateDbResponses.filter(
