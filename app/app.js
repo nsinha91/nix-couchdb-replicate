@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 // -- Imports --
 const cliProgress = require("cli-progress")
 const { helpArgConfig, versionArgConfig, mainArgsConfig } = require("./config")
@@ -15,6 +16,7 @@ const {
 } = require("./services/args")
 const { showHelpInfo, showVersionInfo } = require("./services/info")
 
+// -- Main --
 const main = async () => {
   try {
     // -- Variables --
@@ -135,4 +137,5 @@ const main = async () => {
   }
 }
 
+// -- Run --
 main()

@@ -1,8 +1,7 @@
 {
   "name": "nix-couchdb-replicate",
   "version": "2.0.0",
-  "description": "Does a one-off, one-way replication of all databases in one CouchDB installation to another CouchDB installation",
-  "main": "index.js",
+  "description": "A cli tool that does a one-off, one-way replication of all databases in one CouchDB installation to another CouchDB installation",
   "author": "Nikhil Sinha",
   "license": "ISC",
   "dependencies": {
@@ -10,7 +9,7 @@
     "validator": "^13.11.0"
   },
   "bin": {
-    "nix-couchdb-replicate": "./index.js"
+    "nix-couchdb-replicate": "./app/app.js"
   },
   "repository": {
     "type": "git",

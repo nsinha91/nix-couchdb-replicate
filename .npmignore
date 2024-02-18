@@ -1,6 +1,7 @@
 # .gitignore is ignored by npm by default, so there's no need to add it here.
 # Everything in node_modules is ignored by npm, except for bundled dependencies. npm automatically handles this for you, there is no need to add node_modules here.
 /.vscode
+/scripts
 .env
 compose.yaml
 .eslintrc.json
@@ -8,4 +9,4 @@ compose.yaml
 .prettierrc.json
 .prettierignore
 .env.example
-setup.js
+DEVELOPMENT.md
