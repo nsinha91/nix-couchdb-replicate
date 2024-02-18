@@ -8,11 +8,15 @@ Create a `.env` file in the root of the project if it does not exist already. In
 
 #### Databases
 
-Initialize test databases using `docker-compose up -d`.
+Initialize test database installations using `docker-compose up -d`.
 
 #### Install modules
 
 Install packages using `npm i`.
+
+#### Run setup
+
+Run `node scripts/setup.js` to initialize system dbs inside the test db installations.
 
 #### Testing the tool
 
