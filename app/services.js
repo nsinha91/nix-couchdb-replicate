@@ -97,9 +97,19 @@ const replicateDb = async ({
     }),
   })
   if (response.ok) {
-    return await response.json()
+    const { ok, no_changes: noChanges } = await response.json()
+    if (ok) {
+      return { success: true, dbChanged: !noChanges }
+    } else {
+      return { success: false }
+    }
   } else {
-    throw new Error(await response.text())
+    return {
+      success: false,
+      dbName,
+      status: response.status,
+      message: await response.text(),
+    }
   }
 }
 

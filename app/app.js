@@ -1,4 +1,5 @@
 // -- Imports --
+const cliProgress = require("cli-progress")
 const { helpArgConfig, versionArgConfig, mainArgsConfig } = require("./config")
 const { stripCredentialsFromUrl } = require("./utils")
 const {
@@ -49,6 +50,7 @@ const main = async () => {
       password: targetDbServerPassword,
     } = stripCredentialsFromUrl(validatedMainArgs.target_url)
     // -- Check db servers --
+    console.log("> Checks:")
     await checkDbServer({
       url: sourceDbServerUrl,
       username: sourceDbServerUsername,
@@ -74,8 +76,17 @@ const main = async () => {
         validatedMainArgs.non_users_system_dbs_to_include,
     })
     // -- Replicate dbs --
-    for (const dbName of sourceDbNamesToReplicate) {
-      const replicationResponse = await replicateDb({
+    console.log("\n> Progress:")
+    const totalNoOfDbsInSource = allSourceDbNames.length
+    const noOfDbsToReplicate = sourceDbNamesToReplicate.length
+    const replicateDbResponses = []
+    const progressBar = new cliProgress.SingleBar(
+      {},
+      cliProgress.Presets.shades_classic
+    )
+    progressBar.start(noOfDbsToReplicate, 0)
+    for (const [i, dbName] of sourceDbNamesToReplicate.entries()) {
+      const replicateDbResponse = await replicateDb({
         dbName,
         executionServer: validatedMainArgs.execution_server,
         sourceDbServerUrl,
@@ -89,8 +100,35 @@ const main = async () => {
         targetUrlInsideExecutionServer:
           validatedMainArgs.target_url_inside_execution_server,
       })
-      console.log(1, replicationResponse)
+      replicateDbResponses.push(replicateDbResponse)
+      progressBar.update(i + 1)
     }
+    progressBar.stop()
+    const successfulReplicateDbResponses = replicateDbResponses.filter(
+      (response) => response.success
+    )
+    const failedReplicateDbResponses = replicateDbResponses.filter(
+      (response) => !response.success
+    )
+    const summary = {
+      total_no_of_dbs_in_source: totalNoOfDbsInSource,
+      no_of_source_dbs_to_replicate: noOfDbsToReplicate,
+      no_of_source_dbs_replicated: successfulReplicateDbResponses.length,
+      no_of_target_dbs_changed: successfulReplicateDbResponses.filter(
+        (response) => response.dbChanged
+      ).length,
+      ...(failedReplicateDbResponses.length > 0 && {
+        no_of_db_replications_failed: failedReplicateDbResponses.length,
+        db_replication_errors: failedReplicateDbResponses.map((response) => ({
+          db_name: response.dbName,
+          status: response.status,
+          message: response.message,
+        })),
+      }),
+    }
+    // -- Info to user --
+    console.log("\n> Summary:")
+    console.log(JSON.stringify(summary, null, 2))
   } catch (err) {
     console.error(err)
   }
