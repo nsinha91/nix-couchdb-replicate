@@ -19,14 +19,14 @@ const mainArgsConfig = {
   sourceUrl: {
     name: "source_url",
     description:
-      "Url of the CouchDB installation from where to clone dbs. Should be a valid url containing the server admin credentials, e.g., 'http://admin:password@localhost:5984'.",
+      "Url of the CouchDB installation from where to clone dbs. Should be a valid url containing the server admin credentials, e.g., 'http://admin:password@localhost:5984'. If the credentials contain url-unsafe or reserved characters such as '@', pass the url-encoded value for those characters. So, e.g., if the server admin username is 'admin@example.com', the passed value of this option should be 'http://admin%40example.com:password@localhost:5984'.",
     required: true,
     validationFn: urlArgValidationFn,
   },
   targetUrl: {
     name: "target_url",
     description:
-      "Url of the CouchDB installation where to clone dbs to. Should be a valid url containing the server admin credentials, e.g., 'http://admin:password@db.example.com'.",
+      "Url of the CouchDB installation where to clone dbs to. Should be a valid url containing the server admin credentials, e.g., 'http://admin:password@db.example.com'. If the credentials contain url-unsafe or reserved characters such as '@', pass the url-encoded value for those characters. So, e.g., if the server admin username is 'admin@example.com', the passed value of this option should be 'http://admin%40example.com:password@db.example.com'.",
     required: true,
     validationFn: urlArgValidationFn,
   },
@@ -85,7 +85,7 @@ const mainArgsConfig = {
   sourceUrlInsideExecutionServer: {
     name: "source_url_inside_execution_server",
     description:
-      "Url of the source CouchDB server to be used when the cli connects to it from inside the execution server. This is especially useful when both, the source server and the target server, are running inside docker containers on the same machine. If passed, should be a valid url WITHOUT credentials, e.g., 'http://host.docker.internal:6984'. Defaults to the credentials-stripped value of 'source_url',e.g., if the value of 'source_url' is 'http://admin:password@localhost:6984', then this option defaults to 'http://localhost:6984'.",
+      "Url of the source CouchDB server to be used when the cli connects to it from inside the execution server. This is especially useful in the following cases: (1) when the 'execution_server' is 'source', and the source server is running inside a docker container on localhost, and (2) when both, the source server and the target server, are running inside docker containers on localhost. If passed, should be a valid url WITHOUT credentials, e.g., 'http://host.docker.internal:6984'. Defaults to the credentials-stripped value of 'source_url',e.g., if the value of 'source_url' is 'http://admin:password@localhost:6984', then this option defaults to 'http://localhost:6984'.",
     defaultValueArg: "source_url",
     stripCredentialsFromDefaultValueUrl: true,
     validationFn: urlArgValidationFn,
@@ -93,7 +93,7 @@ const mainArgsConfig = {
   targetUrlInsideExecutionServer: {
     name: "target_url_inside_execution_server",
     description:
-      "Url of the target CouchDB server to be used when the cli connects to it from inside the execution server. This is especially useful when both, the source server and the target server, are running inside docker containers on the same machine. If passed, should be a valid url WITHOUT credentials, e.g., 'http://host.docker.internal:6984'. Defaults to the credentials-stripped value of 'target_url',e.g., if the value of 'target_url' is 'http://admin:password@localhost:6984', then this option defaults to 'http://localhost:6984'.",
+      "Url of the target CouchDB server to be used when the cli connects to it from inside the execution server. This is especially useful in the following cases: (1) when the 'execution_server' is 'target', and the target server is running inside a docker container on localhost, and (2) when both, the source server and the target server, are running inside docker containers on localhost. If passed, should be a valid url WITHOUT credentials, e.g., 'http://host.docker.internal:6984'. Defaults to the credentials-stripped value of 'target_url',e.g., if the value of 'target_url' is 'http://admin:password@localhost:6984', then this option defaults to 'http://localhost:6984'.",
     defaultValueArg: "target_url",
     stripCredentialsFromDefaultValueUrl: true,
     validationFn: urlArgValidationFn,

@@ -34,7 +34,7 @@ const readmeConfig = {
     },
     { text: "Faster replication using a larger batch size:" },
     {
-      code: `${packageDotJson.name} \\\n\tsource_url=http://admin:password@localhost:5984 \\\n\ttarget_url=http://admin:password@db.example.com \\\n\tbatch_size=20`,
+      code: `${packageDotJson.name} \\\n\tsource_url=http://admin:password@localhost:5984 \\\n\ttarget_url=http://admin:password@db.example.com \\\n\tbatch_size=50`,
     },
     {
       text: "Replication when both, the source server and the target server, are running inside docker containers on localhost:",
@@ -61,6 +61,21 @@ const readmeConfig = {
     { code: `${packageDotJson.name} ${helpArgConfig.names[1]}` },
     { code: `${packageDotJson.name} ${versionArgConfig.names[1]}` },
   ],
+  informationSection: [
+    { header: "Information" },
+    {
+      link: {
+        text: "Changelog",
+        url: "https://github.com/nsinha91/nix-couchdb-replicate/blob/master/CHANGELOG.md",
+      },
+    },
+    {
+      link: {
+        text: "Development",
+        url: "https://github.com/nsinha91/nix-couchdb-replicate/blob/master/DEVELOPMENT.md",
+      },
+    },
+  ],
 }
 
 const buildReadme = () => {
@@ -77,6 +92,9 @@ const buildReadme = () => {
           break
         case "code":
           mdText += `\`\`\`\n${itemValue}\n\`\`\`\n\n`
+          break
+        case "link":
+          mdText += `[${itemValue.text}](${itemValue.url})\n\n`
           break
         case "table":
           for (const header of itemValue.headers) {
