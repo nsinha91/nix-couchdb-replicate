@@ -55,6 +55,7 @@ const filterSourceDbNamesToReplicate = ({
 
 const replicateDb = async ({
   dbName,
+  includeSecurityObjects,
   executionServer,
   sourceDbServerUrl,
   sourceDbServerUsername,
@@ -65,6 +66,7 @@ const replicateDb = async ({
   sourceUrlInsideExecutionServer,
   targetUrlInsideExecutionServer,
 }) => {
+  // -- Variables --
   const executionDbServerUrl =
     executionServer === "source" ? sourceDbServerUrl : targetDbServerUrl
   const executionDbServerUsername =
@@ -75,47 +77,124 @@ const replicateDb = async ({
     executionServer === "source"
       ? sourceDbServerPassword
       : targetDbServerPassword
-  const response = await fetch(`${executionDbServerUrl}/_replicate`, {
-    method: "POST",
-    headers: new Headers({
-      Authorization:
-        "Basic " +
-        btoa(`${executionDbServerUsername}:${executionDbServerPassword}`),
-      "Content-Type": "application/json",
-    }),
-    body: JSON.stringify({
-      create_target: true,
-      source: {
-        url: `${sourceUrlInsideExecutionServer || sourceDbServerUrl}/${dbName}`,
-        headers: {
-          Authorization:
-            "Basic " +
-            btoa(`${sourceDbServerUsername}:${sourceDbServerPassword}`),
+  const response = {}
+  // -- Replicate db --
+  const dbReplicationResponse = await fetch(
+    `${executionDbServerUrl}/_replicate`,
+    {
+      method: "POST",
+      headers: new Headers({
+        Authorization:
+          "Basic " +
+          btoa(`${executionDbServerUsername}:${executionDbServerPassword}`),
+        "Content-Type": "application/json",
+      }),
+      body: JSON.stringify({
+        create_target: true,
+        source: {
+          url: `${sourceUrlInsideExecutionServer || sourceDbServerUrl}/${dbName}`,
+          headers: {
+            Authorization:
+              "Basic " +
+              btoa(`${sourceDbServerUsername}:${sourceDbServerPassword}`),
+          },
         },
-      },
-      target: {
-        url: `${targetUrlInsideExecutionServer || targetDbServerUrl}/${dbName}`,
-        headers: {
-          Authorization:
-            "Basic " +
-            btoa(`${targetDbServerUsername}:${targetDbServerPassword}`),
+        target: {
+          url: `${targetUrlInsideExecutionServer || targetDbServerUrl}/${dbName}`,
+          headers: {
+            Authorization:
+              "Basic " +
+              btoa(`${targetDbServerUsername}:${targetDbServerPassword}`),
+          },
         },
-      },
-    }),
-  })
-  if (response.ok) {
-    const { ok, no_changes: noChanges } = await response.json()
+      }),
+    }
+  )
+  if (dbReplicationResponse.ok) {
+    const { ok, no_changes: noChanges } = await dbReplicationResponse.json()
     if (ok) {
-      return { success: true, dbChanged: !noChanges }
+      response.dbReplicated = true
+      response.dbChanged = !noChanges
     } else {
-      return { success: false }
+      return {
+        code: "replicate_failed",
+        dbName,
+      }
     }
   } else {
     return {
-      success: false,
+      code: "replicate_failed",
       dbName,
-      status: response.status,
-      message: await response.text(),
+      status: dbReplicationResponse.status,
+      message: await dbReplicationResponse.text(),
+    }
+  }
+  // -- Return if security objects not included in replication --
+  if (!includeSecurityObjects) {
+    return response
+  }
+  // -- Variables --
+  let sourceDbSecurityObj
+  // -- Get security object of source db --
+  const getSourceDbSecurityObjResponse = await fetch(
+    `${sourceDbServerUrl}/${dbName}/_security`,
+    {
+      method: "GET",
+      headers: new Headers({
+        Authorization:
+          "Basic " +
+          btoa(`${sourceDbServerUsername}:${sourceDbServerPassword}`),
+        "Content-Type": "application/json",
+      }),
+    }
+  )
+  if (getSourceDbSecurityObjResponse.ok) {
+    sourceDbSecurityObj = await getSourceDbSecurityObjResponse.json()
+  } else {
+    return {
+      code: "get_source_security_failed",
+      dbName,
+      dbReplicated: true,
+      dbChanged: response.dbChanged,
+      status: getSourceDbSecurityObjResponse.status,
+      message: await getSourceDbSecurityObjResponse.text(),
+    }
+  }
+  // -- Put security object in target db --
+  const putTargetDbSecurityObjResponse = await fetch(
+    `${targetDbServerUrl}/${dbName}/_security`,
+    {
+      method: "PUT",
+      headers: new Headers({
+        Authorization:
+          "Basic " +
+          btoa(`${targetDbServerUsername}:${targetDbServerPassword}`),
+        "Content-Type": "application/json",
+      }),
+      body: JSON.stringify(sourceDbSecurityObj),
+    }
+  )
+  if (putTargetDbSecurityObjResponse.ok) {
+    const { ok } = await putTargetDbSecurityObjResponse.json()
+    if (ok) {
+      response.securityOverwritten = true
+      return response
+    } else {
+      return {
+        code: "put_target_security_failed",
+        dbName,
+        dbReplicated: true,
+        dbChanged: response.dbChanged,
+      }
+    }
+  } else {
+    return {
+      code: "put_target_security_failed",
+      dbName,
+      dbReplicated: true,
+      dbChanged: response.dbChanged,
+      status: putTargetDbSecurityObjResponse.status,
+      message: await putTargetDbSecurityObjResponse.text(),
     }
   }
 }

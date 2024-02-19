@@ -30,6 +30,14 @@ const mainArgsConfig = {
     required: true,
     validationFn: urlArgValidationFn,
   },
+  includeSecurityObjects: {
+    name: "include_security_objects",
+    description:
+      "Whether to include the '_security' objects of dbs in the replication. If passed, should be either 'true' or 'false'. Note that if this option is 'true', the '_security' objects of dbs in the target server are overwritten by the '_security' objects of dbs in the source server. Defaults to 'true'.",
+    defaultValue: true,
+    validValues: ["true", "false"],
+    sanitize: (val) => val === "true",
+  },
   includeUsersDb: {
     name: "include_users_db",
     description:

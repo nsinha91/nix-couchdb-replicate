@@ -100,6 +100,7 @@ const main = async () => {
         const replicateDbResponsePromise = new Promise((resolve) => {
           replicateDb({
             dbName,
+            includeSecurityObjects: validatedMainArgs.include_security_objects,
             executionServer: validatedMainArgs.execution_server,
             sourceDbServerUrl,
             sourceDbServerUsername,
@@ -122,27 +123,37 @@ const main = async () => {
       await Promise.allSettled(chunkedReplicateDbResponsePromises)
     }
     progressBar.stop()
-    const successfulReplicateDbResponses = replicateDbResponses.filter(
-      (response) => response.success
-    )
+    const noOfSourceDbsForWhichDataReplicated = replicateDbResponses.filter(
+      (response) => response.dbReplicated
+    ).length
+    const noOfTargetDbsForWhichSecurityObjOverwritten =
+      replicateDbResponses.filter(
+        (response) => response.securityOverwritten
+      ).length
+    const noOfTargetDbsForWhichDataChanged = replicateDbResponses.filter(
+      (response) => response.dbChanged
+    ).length
     const failedReplicateDbResponses = replicateDbResponses.filter(
-      (response) => !response.success
+      (response) => response.code
     )
+    const errors = failedReplicateDbResponses.map((response) => ({
+      db_name: response.dbName,
+      code: response.code,
+      status: response.status,
+      message: response.message,
+      source_db_replicated: response.dbReplicated,
+      target_db_changed: response.dbChanged,
+    }))
     const summary = {
       total_no_of_dbs_in_source: totalNoOfDbsInSource,
       no_of_source_dbs_to_replicate: noOfDbsToReplicate,
-      no_of_source_dbs_replicated: successfulReplicateDbResponses.length,
-      no_of_target_dbs_changed: successfulReplicateDbResponses.filter(
-        (response) => response.dbChanged
-      ).length,
-      ...(failedReplicateDbResponses.length > 0 && {
-        no_of_db_replications_failed: failedReplicateDbResponses.length,
-        db_replication_errors: failedReplicateDbResponses.map((response) => ({
-          db_name: response.dbName,
-          status: response.status,
-          message: response.message,
-        })),
-      }),
+      no_of_source_dbs_for_which_data_replicated:
+        noOfSourceDbsForWhichDataReplicated,
+      no_of_target_dbs_for_which_data_changed: noOfTargetDbsForWhichDataChanged,
+      no_of_target_dbs_for_which_security_obj_overwritten:
+        noOfTargetDbsForWhichSecurityObjOverwritten,
+      no_of_errors: failedReplicateDbResponses.length,
+      errors,
     }
     // -- Info to user --
     console.log("\n> Summary:")
