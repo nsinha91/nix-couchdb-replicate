@@ -3,10 +3,11 @@
 /.vscode
 /scripts
 .env
+.env.example
 compose.yaml
 .eslintrc.json
 .eslintignore
 .prettierrc.json
 .prettierignore
-.env.example
 DEVELOPMENT.md
+CHANGELOG.md
