@@ -1,7 +1,7 @@
 ### v2.1.0
 
 - Added options - `include_security_objects`, `non_system_dbs_to_include`, `non_system_dbs_to_exclude`.
-- Change default value for `batch_size`.
+- Changed default value for `batch_size`.
 
 ### v2.0.0
 
