@@ -32,12 +32,8 @@ const main = async () => {
       showVersionInfo()
       return
     }
-    // -- Get validated main args or error out --
+    // -- Get validated main args --
     const validatedMainArgs = getValidatedMainArgs({ args, mainArgsConfig })
-    if (!validatedMainArgs) {
-      return
-    }
-    // -- Info to user --
     console.log(
       `\n> Running replication with the following config:\n${JSON.stringify(validatedMainArgs, null, 2)}\n`
     )
@@ -77,7 +73,13 @@ const main = async () => {
       includeUsersDb: validatedMainArgs.include_users_db,
       nonUsersSystemDbsToInclude:
         validatedMainArgs.non_users_system_dbs_to_include,
+      nonSystemDbsToInclude: validatedMainArgs.non_system_dbs_to_include,
+      nonSystemDbsToExclude: validatedMainArgs.non_system_dbs_to_exclude,
     })
+    // -- Check if there are dbs to replicate --
+    if (sourceDbNamesToReplicate.length === 0) {
+      throw new Error("No dbs to replicate.")
+    }
     // -- Replicate dbs --
     console.log("\n> Progress:")
     const sourceDbNameChunksToReplicate = chunkArray({
@@ -146,6 +148,7 @@ const main = async () => {
     console.log("\n> Summary:")
     console.log(JSON.stringify(summary, null, 2))
   } catch (err) {
+    console.log("")
     console.error(err)
   }
 }

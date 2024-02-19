@@ -1,6 +1,6 @@
 {
   "name": "nix-couchdb-replicate",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A cli tool that does a one-off, one-way replication of all databases in one CouchDB installation to another CouchDB installation",
   "author": "Nikhil Sinha",
   "license": "ISC",

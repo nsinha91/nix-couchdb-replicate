@@ -42,7 +42,29 @@ const mainArgsConfig = {
     name: "non_users_system_dbs_to_include",
     description: `System dbs (those whose names begin with '_') other than '_users' (such as '_replicator' and '_global_changes') to be included in the replication. If passed, should be a comma-separated string of db names, e.g., 'non_users_system_dbs_to_include=_replicator,_global_changes'. Since ${packageDotJson.name} uses CouchDB's transient replication (i.e., there is no involvement of CouchDB's '_replicator' database), you most likely do not need to include the '_replicator' db in the replication. By default, no system dbs other than '_users' are included in the replication.`,
     defaultValue: [],
-    validationFn: listArgValidationFn,
+    validationFn: (val) =>
+      listArgValidationFn(val) &&
+      val.split(",").every((el) => el.startsWith("_")),
+    sanitize: (val) => val.split(","),
+  },
+  nonSystemDbsToInclude: {
+    name: "non_system_dbs_to_include",
+    description:
+      "A whitelist of non-system dbs (those whose names do not begin with '_') to be included in the replication. Use this option if you want to replicate only some non-system dbs. If passed, should be a comma-separated string of db names, e.g., 'non_system_dbs_to_include=db1,db2,db3'. By default, all non-system dbs are included in the replication.",
+    defaultValue: [],
+    validationFn: (val) =>
+      listArgValidationFn(val) &&
+      val.split(",").every((el) => !el.startsWith("_")),
+    sanitize: (val) => val.split(","),
+  },
+  nonSystemDbsToExclude: {
+    name: "non_system_dbs_to_exclude",
+    description:
+      "A whitelist of non-system dbs (those whose names do not begin with '_') to be excluded from the replication. Use this option if you want to replicate all except some non-system dbs. If passed, should be a comma-separated string of db names, e.g., 'non_system_dbs_to_exclude=db1,db2,db3'. By default, no non-system dbs are excluded from the replication.",
+    defaultValue: [],
+    validationFn: (val) =>
+      listArgValidationFn(val) &&
+      val.split(",").every((el) => !el.startsWith("_")),
     sanitize: (val) => val.split(","),
   },
   executionServer: {

@@ -30,14 +30,25 @@ const filterSourceDbNamesToReplicate = ({
   allSourceDbNames,
   includeUsersDb,
   nonUsersSystemDbsToInclude,
+  nonSystemDbsToInclude,
+  nonSystemDbsToExclude,
 }) => {
   return allSourceDbNames.filter((dbName) => {
-    if (dbName === "_users") {
-      return includeUsersDb
-    } else if (dbName.startsWith("_")) {
-      return nonUsersSystemDbsToInclude.includes(dbName)
+    if (dbName.startsWith("_")) {
+      if (dbName === "_users") {
+        return includeUsersDb
+      } else {
+        return nonUsersSystemDbsToInclude.includes(dbName)
+      }
     } else {
-      return true
+      if (nonSystemDbsToInclude.length > 0) {
+        return (
+          nonSystemDbsToInclude.includes(dbName) &&
+          !nonSystemDbsToExclude.includes(dbName)
+        )
+      } else {
+        return !nonSystemDbsToExclude.includes(dbName)
+      }
     }
   })
 }

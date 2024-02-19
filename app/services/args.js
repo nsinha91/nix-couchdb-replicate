@@ -25,25 +25,22 @@ const getValidatedMainArgs = ({ args, mainArgsConfig }) => {
     )
     // -- Error out if arg unknown --
     if (!argConfig) {
-      console.error(
+      throw new Error(
         `Unknown option "${argName}" passed. Run "${packageDotJson.name} --help" to see usage info.`
       )
-      return false
     }
     // -- Error out if arg value incorrect --
     if (argConfig.validValues) {
       if (!validator.isIn(argValue, argConfig.validValues)) {
-        console.error(
+        throw new Error(
           `Incorrect value for option "${argName}". Run "${packageDotJson.name} --help" to see usage info.`
         )
-        return false
       }
     } else if (argConfig.validationFn) {
       if (!argConfig.validationFn(argValue)) {
-        console.error(
+        throw new Error(
           `Incorrect value for option "${argName}". Run "${packageDotJson.name} --help" to see usage info.`
         )
-        return false
       }
     }
     // -- Sanitize if required --
@@ -62,10 +59,9 @@ const getValidatedMainArgs = ({ args, mainArgsConfig }) => {
     (requiredMainArgName) => !mainArgNamesPassed.includes(requiredMainArgName)
   )
   if (requiredMainArgNamesNotPassed.length > 0) {
-    console.error(
+    throw new Error(
       `Missing required option(s): "${requiredMainArgNamesNotPassed.join('", "')}". Run "${packageDotJson.name} --help" to see usage info.`
     )
-    return false
   }
   // -- Populate validated main args for not-passed, not-required main args --
   for (const mainArgConfig of Object.values(mainArgsConfig)) {
