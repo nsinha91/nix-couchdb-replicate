@@ -1,12 +1,20 @@
 const checkDbServer = async ({ url, username, password }) => {
-  const response = await fetch(url, {
+  const response = await fetch(`${url}/_session`, {
     method: "GET",
     headers: new Headers({
       Authorization: "Basic " + btoa(`${username}:${password}`),
     }),
   })
   if (response.ok) {
-    return true
+    const { userCtx } = await response.json()
+    const isServerAdmin = userCtx.roles.includes("_admin")
+    if (!isServerAdmin) {
+      throw new Error(
+        "The credentials passed in the url should be server admin credentials."
+      )
+    } else {
+      return true
+    }
   } else {
     throw new Error(await response.text())
   }

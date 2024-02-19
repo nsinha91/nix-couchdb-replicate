@@ -16,7 +16,11 @@ const stripCredentialsFromUrl = (url) => {
   if (isTrailingSlashInCleanedUrl) {
     cleanedUrl = cleanedUrl.replace(/\/+$/, "")
   }
-  return { credentialsStrippedUrl: cleanedUrl, username, password }
+  return {
+    credentialsStrippedUrl: cleanedUrl,
+    username: decodeURIComponent(username),
+    password: decodeURIComponent(password),
+  }
 }
 
 const urlArgValidationFn = (val) => {
