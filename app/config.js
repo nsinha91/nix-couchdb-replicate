@@ -71,9 +71,9 @@ const mainArgsConfig = {
   batchSize: {
     name: "batch_size",
     description:
-      "Number of dbs to replicate in parallel. A higher value means faster replication but also higher utilization of resources. A lower value means slower replication and better utilization of resources. If passed, should be between '1' and '50' inclusive. Defaults to '5'.",
-    defaultValue: 5,
-    validationFn: (val) => intArgValidationFn(val, 1, 50),
+      "Number of dbs to replicate in parallel. A higher value means faster replication but also higher utilization of resources. A lower value means slower replication and better utilization of resources. If passed, should be between '1' and '250' inclusive. Defaults to '25'.",
+    defaultValue: 25,
+    validationFn: (val) => intArgValidationFn(val, 1, 250),
     sanitize: (val) => parseInt(val),
   },
 }
